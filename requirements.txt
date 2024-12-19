@@ -1,0 +1,7 @@
+torch==2.5.1
+torchvision==0.20.1
+git+https://SimonLarsen@github.com/SimonLarsen/frogbox.git@v0.5.0
+einops==0.8.0
+pandas==2.2.3
+torchdiffeq==0.2.4
+datasets==3.1.0

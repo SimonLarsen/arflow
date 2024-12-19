@@ -1,0 +1,100 @@
+{
+    "type": "supervised",
+    "project": "arflow",
+    "log_interval": {
+        "event": "epoch_completed",
+        "every": 1
+    },
+    "checkpoints": [
+        {
+            "n_saved": 3,
+            "interval": {
+                "event": "epoch_completed",
+                "every": 1
+            }
+        }
+    ],
+    "batch_size": 11,
+    "loader_workers": 8,
+    "max_epochs": 50,
+    "model": {
+        "class_name": "models.marflow.MARFlow",
+        "params": {
+            "input_size": 256,
+            "patch_size": 16,
+            "ar_embed_dim": 768,
+            "ar_num_layers": 16,
+            "flow_embed_dim": 512,
+            "flow_num_layers": 4,
+            "flow_condition_dim": 512,
+            "num_classes": 4,
+            "activation": "fast_gelu",
+            "norm": "layer"
+        }
+    },
+    "datasets": {
+        "train": {
+            "class_name": "dataloaders.afhqv2.AFHQv2Dataset",
+            "params": {
+                "split": "train",
+                "target_size": 256,
+                "do_normalize": true,
+                "do_augment": true,
+                "crop_min_ratio": 0.9,
+                "num_val": 504,
+                "p_drop": 0.1
+            }
+        },
+        "val": {
+            "class_name": "dataloaders.afhqv2.AFHQv2Dataset",
+            "params": {
+                "split": "val",
+                "target_size": 256,
+                "do_normalize": true,
+                "do_augment": false,
+                "num_val": 504,
+                "p_drop": 0.1
+            }
+        }
+    },
+    "loaders": {
+        "train": {
+            "class_name": "torch.utils.data.DataLoader",
+            "params": {
+                "shuffle": true,
+                "drop_last": true
+            }
+        },
+        "val": {
+            "class_name": "torch.utils.data.DataLoader",
+            "params": {
+                "shuffle": false,
+                "drop_last": true
+            }
+        }
+    },
+    "losses": {
+        "mse": {
+            "weight": 1.0,
+            "class_name": "losses.flow_mse.FlowMSELoss"
+        }
+    },
+    "metrics": {
+        "mae": {
+            "class_name": "torchmetrics.regression.MeanAbsoluteError"
+        }
+    },
+    "optimizer": {
+        "class_name": "torch.optim.AdamW",
+        "params": {
+            "lr": 1e-4,
+            "betas": [0.9, 0.99],
+            "weight_decay": 0.01
+        }
+    },
+    "lr_scheduler": {
+        "type": "cosine",
+        "end_value": 1e-7,
+        "warmup_steps": 50
+    }
+}
